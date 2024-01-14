@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import './tank.css';
 import Dan from "../dan/dan";
 const Tanks = () => {
-    const [direction, setDirection] = useState({ x: -1, code: 37,left:75 });
-   
+    const [direction, setDirection] = useState({ x: 1, code: 37,left:0 });
+    const [directionMouse, setDirectionMouse] = useState({isDan:false});
    
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -35,6 +35,24 @@ const Tanks = () => {
           window.removeEventListener("keydown", handleKeyDown);
         };
       }, []);
+
+      useEffect(() => {
+        const handleMouseClick = (event) => {
+          const x = event.clientX;
+          const y = event.clientY;
+          setDirectionMouse({isDan:true,x,y})
+        };
+    
+        window.document.addEventListener('click', handleMouseClick);
+    
+        return () => {
+          window.document.removeEventListener('click', handleMouseClick);
+        };
+      }, []);
+
+    const handle = () => {
+      setDirectionMouse({...directionMouse,isDan:false})
+    }
     return (
         <div
             style={{
@@ -55,23 +73,12 @@ const Tanks = () => {
                     transition:"0.3s linear",
                     transform: `scaleX(${direction.x})`,
                 }}
-            >
-                {/* <div
-                    className="banhxe"
-                    style={{    
-                        position: "absolute",
-                        top: "122px",
-                        right: "47px",
-                        width: "21px",
-                        height: "5px",
-                        backgroundColor: "red",
-                        transform: "rotate(90deg)",
-                        animationIterationCount:"infinite",
-                        // animation-iteration-count: infinite
-                    }}
-                /> */}
+            > 
+            {
+              directionMouse.isDan &&  <Dan leftPr={direction.left + 200} topPr={55} mouse={directionMouse} handle={handle}/>
+            }
             </div>
-                <Dan />
+                
             <div style={{ position: "absolute", bottom: "30px", right: 30 }}>
                 <button
                     id="leftButton"
